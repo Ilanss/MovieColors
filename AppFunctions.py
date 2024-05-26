@@ -9,7 +9,7 @@ def fileSettings():
     
     video_path = filedialog.askopenfilename(
         title="Select a Video File",
-        filetypes=[("Video Files", "*.mp4 *.avi *.mov"), ("All Files", "*.*")]
+        filetypes=[("Video Files", "*.mp4 *.avi *.mov *.mkv"), ("All Files", "*.*")]
     )
 
     file_stats = os.stat(video_path)
@@ -78,6 +78,7 @@ def imageFormat():
 
 def readVideo(video_path):
     import cv2
+    import multiprocessing as mp
     from tqdm import tqdm
 
     cap = cv2.VideoCapture(video_path)
@@ -88,25 +89,44 @@ def readVideo(video_path):
 
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     pbar = tqdm(total=total_frames, desc="Reading frames")
+    frame_skip=10
+    frame_count = 0
 
     while True:
         ret, frame = cap.read()
         if not ret:
             break
-        frame_colors.append(frame)
+        if frame_count % frame_skip == 0:
+            frame = cv2.resize(frame, (960, 540))
+            frame_colors.append(frame)
+            pass
         pbar.update(1)
+        frame_count += 1
 
     pbar.close()
     cap.release()
 
     return frame_colors
 
+# def average_color(frame_colors):
+#     import numpy as np
+#     from tqdm import tqdm
+
+#     average_colors = [tuple(np.mean(frame, axis=(0, 1)).astype(int)) for frame in tqdm(frame_colors, desc="Processing frames")]
+
+#     # average_colors = [tuple(np.mean(frame, axis=(0, 1)).astype(int)) for frame in frame_colors]
+
+#     return average_colors
+
 def average_color(frame_colors):
-    import numpy as np
     from tqdm import tqdm
+    import multiprocessing as mp
 
-    average_colors = [tuple(np.mean(frame, axis=(0, 1)).astype(int)) for frame in tqdm(frame_colors, desc="Processing frames")]
-
-    # average_colors = [tuple(np.mean(frame, axis=(0, 1)).astype(int)) for frame in frame_colors]
-
+    with mp.Pool(mp.cpu_count()) as pool:
+        average_colors = list(tqdm(pool.imap(compute_average_color, frame_colors), total=len(frame_colors), desc="Processing frames"))
     return average_colors
+
+def compute_average_color(frame):
+    import numpy as np
+
+    return tuple(np.mean(frame, axis=(0, 1)).astype(int))
