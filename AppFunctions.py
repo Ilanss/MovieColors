@@ -56,6 +56,7 @@ def imageFormat():
         'SD',
         'HD',
         '4K',
+        'Full',
         'Custom'
     ]).ask()
 
@@ -68,6 +69,9 @@ def imageFormat():
 
         case "4K":
             image_format_size = {"target_width": 3840, "height": 2160}
+
+        case "Full":
+            image_format_size = {"target_width": 'full', "height": 720}
 
         case _:
             width = int(questionary.text("Enter width: ").ask())

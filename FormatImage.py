@@ -4,6 +4,9 @@ import numpy as np
 def generateFromFormat(colors, width, height, image_name):
     num_frames = len(colors)
 
+    if isinstance(width, str):
+        width = num_frames
+        
     print("Bringing to target image format...")
 
     if num_frames < width:
