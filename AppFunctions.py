@@ -12,6 +12,8 @@ def fileSettings():
         filetypes=[("Video Files", "*.mp4 *.avi *.mov *.mkv"), ("All Files", "*.*")]
     )
 
+    # if video_path == '':
+    #     video_path = 'movies/your_videov.mp4'
     file_stats = os.stat(video_path)
 
     while file_stats.st_size > 1000000:
@@ -47,30 +49,60 @@ def userContinue():
 
     return nextStep
 
+def processMode():
+    import questionary
+    from questionary.prompts.common import Choice
+
+    mode = questionary.select(
+        "In which mode do you want to run?",
+        choices=[
+            Choice(title="single file", value="1"),
+            Choice(title="batch", value="2"),
+        ]
+    )
+
+    return mode
+
+def engineChoice():
+    import questionary
+    from questionary.prompts.common import Choice
+
+    choice = questionary.select(
+        "What engine do you wish to run?",
+        choices=[
+            Choice(title="ffmpeg", value="1"),
+            Choice(title="OpenCV", value="2"),
+            Choice(title="merge", value="3"),
+        ]
+    )
+
+    return choice
+
 def imageFormat():
     import questionary
-
+    from questionary.prompts.common import Choice
+    
     image_format = questionary.select(
     "What image format do you want to generate?",
     choices=[
-        'SD',
-        'HD',
-        '4K',
-        'Full',
-        'Custom'
+        Choice(title="SD", value="1"),
+        Choice(title="HD", value="2"),
+        Choice(title="4K", value="3"),
+        Choice(title="Full", value="4"),
+        Choice(title="Custom", value="5"),
     ]).ask()
 
     match image_format:
-        case "SD":
+        case '1':
             image_format_size = {"target_width": 960, "height": 720}
 
-        case "HD":
+        case '2':
             image_format_size = {"target_width": 1920, "height": 1080}
 
-        case "4K":
+        case '3':
             image_format_size = {"target_width": 3840, "height": 2160}
 
-        case "Full":
+        case '4':
             image_format_size = {"target_width": 'full', "height": 720}
 
         case _:
@@ -101,7 +133,7 @@ def readVideo(video_path):
         if not ret:
             break
         if frame_count % frame_skip == 0:
-            frame = cv2.resize(frame, (960, 540))
+            frame = cv2.resize(frame, (1,1))
             frame_colors.append(frame)
             pass
         pbar.update(1)
@@ -109,6 +141,36 @@ def readVideo(video_path):
 
     pbar.close()
     cap.release()
+
+    return frame_colors
+
+def readVideoFF(video_path):
+    import ffmpeg
+    import numpy as np
+
+    frame_colors = []
+
+    print("")
+    print("Reading video...")
+
+    frame_skip=10
+
+    process = (
+        ffmpeg
+        .input(video_path)
+        #.filter('select', f'not(mod(n\,{frame_skip}))')
+        .output('pipe:', format='rawvideo', pix_fmt='rgb24', s='1x1')
+        .run_async(pipe_stdout=True)
+    )
+
+    while True:
+        in_bytes = process.stdout.read(3)  # Read 3 bytes (1x1 RGB frame)
+        if not in_bytes:
+            break
+        color = np.frombuffer(in_bytes, np.uint8)
+        frame_colors.append(color.tolist())
+
+    process.wait()
 
     return frame_colors
 

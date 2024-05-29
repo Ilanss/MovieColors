@@ -14,12 +14,16 @@ def generateFromFormat(colors, width, height, image_name):
         repeats = width // num_frames
         remainder = width % num_frames
         repeated_colors = []
+
         for i in range(num_frames):
-            repeated_colors.extend([colors[i]] * repeats)
+            # Convert color array to tuple
+            color = tuple(colors[i].tolist())
+            repeated_colors.extend([color] * repeats)
             if i < remainder:
-                repeated_colors.append(colors[i])
+                repeated_colors.append(color)
+
     else:
-        # Average multiple frames to fit into 1920 width
+        # Average multiple frames to fit into width
         scale_factor = num_frames / width
         averaged_colors = []
         for i in range(width):
@@ -32,18 +36,16 @@ def generateFromFormat(colors, width, height, image_name):
             averaged_colors.append(averaged_color)
         repeated_colors = averaged_colors
 
-    # Step 4: Create the Image with Vertical Lines
+    #line_pixels = [tuple(pixel) for pixel in colors]
 
-    image = Image.new("RGB", (width, height))
-    pixels = []
+    # Define the width and height of the image
+    #width = len(line_pixels)
 
-    print("Generating lines...")
+    # Create a new image with the given width and height
+    image = Image.new('RGB', (width, height))
 
-    for _ in range(height):
-        for color in repeated_colors:
-            pixels.extend([color])
-
-    print("Saving image...")
+    # Generate pixel data for the entire image by repeating the line
+    pixels = repeated_colors * height
 
     image.putdata(pixels)
     image.save("results/" + image_name + "-" + str(width) + "x" + str(height) + ".png")
