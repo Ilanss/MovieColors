@@ -14,11 +14,15 @@ def main():
     #file = AppFunctions.fileSettings()
     image_format = AppFunctions.imageFormat()
 
+    frames_colors = {}
+
     for file in files:
         frame_colors = AppFunctions.readVideoFF(file)
+        frames_colors[file] = frame_colors
         createImage(frame_colors, image_format, file)
 
-    return frame_colors, file
+    return frames_colors
+    #return frames_colors, files
 
 def handleFile():
     file = AppFunctions.fileSettings()
@@ -37,16 +41,17 @@ def createImage(average_colors, image_format, file):
     return True
 
 if __name__ == "__main__":
-    average_colors, file = main()
+    frames_colors = main()
     while True:
         nextStep = AppFunctions.userContinue()
         match nextStep:
             case 1:
                 image_format = AppFunctions.imageFormat()
-                createImage(average_colors, image_format, file)
+                for file, average_colors in frames_colors.items():
+                    createImage(average_colors, image_format, file)
 
             case 2:
-                average_colors, file = main()
+                frames_colors = main()
 
             case 3:
                 print("Goodbye!")
