@@ -47,12 +47,22 @@ def folderSetting():
         title="Select a video directory"
     )
 
-    video_extensions = ('*.mp4', '*.avi', '*.mov', '*.mkv', '*.flv', '*.wmv')
-    
     video_paths = []
-    for ext in video_extensions:
-        video_paths.extend(glob.glob(os.path.join(directory_path, ext)))
+    
+    if questionary.confirm("Do you want to search the folder recursively?").ask():
+        video_extensions = ['.mp4', '.avi', '.mov', '.mkv', '.flv', '.wmv']
+        for root, dirs, files in os.walk(directory_path):
+            for file in files:
+                # Check if the file has a video extension
+                if any(file.endswith(ext) for ext in video_extensions):
+                    video_paths.append(os.path.join(root, file))
 
+    else:
+        video_extensions = ('*.mp4', '*.avi', '*.mov', '*.mkv', '*.flv', '*.wmv')    
+        for ext in video_extensions:
+            video_paths.extend(glob.glob(os.path.join(directory_path, ext)))
+
+       
     return video_paths
 
 def userContinue():
