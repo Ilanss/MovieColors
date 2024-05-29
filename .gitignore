@@ -88,5 +88,5 @@ venv.bak/
 
 # App specifics
 movies/
-results/
+results/*
 !results/sample.png
