@@ -2,25 +2,37 @@ import FormatImage
 import AppFunctions
 
 def main():
-    #mode = AppFunctions.processMode()
-    file = AppFunctions.fileSettings()
-    image_format = AppFunctions.imageFormat()
-    frame_colors = AppFunctions.readVideoFF(file["video_path"])
-    #average_colors = AppFunctions.average_color(frame_colors)
+    mode = AppFunctions.processMode()
 
-    createImage(frame_colors, image_format, file)
+    match mode:
+        case '1':
+            files = [AppFunctions.fileSettings()]
+
+        case _:
+            files = AppFunctions.folderSetting()
+            
+    #file = AppFunctions.fileSettings()
+    image_format = AppFunctions.imageFormat()
+
+    for file in files:
+        frame_colors = AppFunctions.readVideoFF(file)
+        createImage(frame_colors, image_format, file)
 
     return frame_colors, file
 
 def handleFile():
     file = AppFunctions.fileSettings()
-    frame_colors = AppFunctions.readVideoFF(file["video_path"])
+    frame_colors = AppFunctions.readVideoFF(file)
     #average_colors = AppFunctions.average_color(frame_colors)
 
     return frame_colors
     
 def createImage(average_colors, image_format, file):
-    FormatImage.generateFromFormat(average_colors, image_format["target_width"], image_format["height"], file["image_name"])
+    import os
+
+    # Split the file name and extension
+    file_name, file_extension = os.path.splitext(os.path.basename(file))
+    FormatImage.generateFromFormat(average_colors, image_format["target_width"], image_format["height"], file_name)
 
     return True
 

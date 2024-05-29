@@ -16,11 +16,12 @@ def generateFromFormat(colors, width, height, image_name):
         repeated_colors = []
 
         for i in range(num_frames):
-            # Convert color array to tuple
-            color = tuple(colors[i].tolist())
+            # Convert color array to tuple directly
+            color = tuple(colors[i])
             repeated_colors.extend([color] * repeats)
             if i < remainder:
                 repeated_colors.append(color)
+
 
     else:
         # Average multiple frames to fit into width
@@ -48,6 +49,6 @@ def generateFromFormat(colors, width, height, image_name):
     pixels = repeated_colors * height
 
     image.putdata(pixels)
-    image.save("results/" + image_name + "-" + str(width) + "x" + str(height) + ".png")
+    image.save("results/" + str(image_name) + "-" + str(width) + "x" + str(height) + ".png")
 
     print("Image with average frame colors saved as '" + image_name + ".png'")

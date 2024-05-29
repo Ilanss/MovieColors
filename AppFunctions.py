@@ -1,8 +1,8 @@
 def fileSettings():
     import tkinter as tk
     from tkinter import filedialog
-    import questionary
-    import os
+    # import questionary
+    # import os
 
     root = tk.Tk()
     root.withdraw() 
@@ -14,27 +14,46 @@ def fileSettings():
 
     # if video_path == '':
     #     video_path = 'movies/your_videov.mp4'
-    file_stats = os.stat(video_path)
+    # file_stats = os.stat(video_path)
 
-    while file_stats.st_size > 1000000:
-        if questionary.confirm("Your file is bigger than 10mb, it may take a long time to process. Are you sure?").ask():
-            break
+    # while file_stats.st_size > 1000000:
+    #     if questionary.confirm("Your file is bigger than 10mb, it may take a long time to process. Are you sure?").ask():
+    #         break
 
-        else:
-            video_path = filedialog.askopenfilename(
-                title="Select a Video File",
-                filetypes=[("Video Files", "*.mp4 *.avi *.mov"), ("All Files", "*.*")]
-            )
+    #     else:
+    #         video_path = filedialog.askopenfilename(
+    #             title="Select a Video File",
+    #             filetypes=[("Video Files", "*.mp4 *.avi *.mov"), ("All Files", "*.*")]
+    #         )
 
-            file_stats = os.stat(video_path)
+    #         file_stats = os.stat(video_path)
 
-
-    #video_name = questionary.text("Enter file name: ").ask()
-    image_name = questionary.text("Enter image name: ").ask()
-    #video_path = "movies/" + video_name + ".mp4"
+    # image_name = questionary.text("Enter image name: ").ask()
 
     #return {"video_name": video_name, "image_name": image_name, "video_path": video_path}
-    return {"image_name": image_name, "video_path": video_path}
+    return video_path
+
+def folderSetting():
+    import tkinter as tk
+    from tkinter import filedialog
+    import glob
+    import questionary
+    import os
+
+    root = tk.Tk()
+    root.withdraw() 
+    
+    directory_path = filedialog.askdirectory(
+        title="Select a video directory"
+    )
+
+    video_extensions = ('*.mp4', '*.avi', '*.mov', '*.mkv', '*.flv', '*.wmv')
+    
+    video_paths = []
+    for ext in video_extensions:
+        video_paths.extend(glob.glob(os.path.join(directory_path, ext)))
+
+    return video_paths
 
 def userContinue():
     import questionary
@@ -59,7 +78,7 @@ def processMode():
             Choice(title="single file", value="1"),
             Choice(title="batch", value="2"),
         ]
-    )
+    ).ask()
 
     return mode
 
