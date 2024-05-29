@@ -111,7 +111,7 @@ def imageFormat():
     import questionary
     from questionary.prompts.common import Choice
     
-    image_format = questionary.select(
+    image_formats = questionary.checkbox(
     "What image format do you want to generate?",
     choices=[
         Choice(title="SD", value="1"),
@@ -121,23 +121,32 @@ def imageFormat():
         Choice(title="Custom", value="5"),
     ]).ask()
 
-    match image_format:
-        case '1':
-            image_format_size = {"target_width": 960, "height": 720}
+    image_format_size = []
 
-        case '2':
-            image_format_size = {"target_width": 1920, "height": 1080}
+    for image_format in image_formats:
+        match image_format:
+            case '1':
+                image_format_size.append({"target_width": 960, "height": 720})
 
-        case '3':
-            image_format_size = {"target_width": 3840, "height": 2160}
+            case '2':
+                image_format_size.append({"target_width": 1920, "height": 1080})
 
-        case '4':
-            image_format_size = {"target_width": 'full', "height": 720}
+            case '3':
+                image_format_size.append({"target_width": 3840, "height": 2160})
 
-        case _:
-            width = int(questionary.text("Enter width: ").ask())
-            height = int(questionary.text("Enter height: ").ask())
-            image_format_size = {"target_width": width, "height": height}
+            case '4':
+                image_format_size.append({"target_width": 'full', "height": 720})
+
+            case _:
+                width = int(questionary.text("Enter width: ").ask())
+                height = int(questionary.text("Enter height: ").ask())
+                image_format_size.append({"target_width": width, "height": height})
+
+                while questionary.confirm("Do you want to create another custom format?").ask():
+                    width = int(questionary.text("Enter width: ").ask())
+                    height = int(questionary.text("Enter height: ").ask())
+                    image_format_size.append({"target_width": width, "height": height})
+
 
     return image_format_size
 
