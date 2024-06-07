@@ -1,5 +1,5 @@
 def fileSettings(cmdMode):
-    if cmdMode == 1:
+    if cmdMode == '1':
         import questionary
 
         video_path = questionary.path("Select a Video File").ask()
@@ -29,7 +29,7 @@ def folderSetting(cmdMode):
     import questionary
     import os
 
-    if cmdMode == 1:
+    if cmdMode == '1':
         directory_path = questionary.path("Select a video directory", only_directories=True).ask()
 
     else:

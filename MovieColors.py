@@ -6,13 +6,13 @@ def main():
 
     match mode:
         case '1':
-            files = [AppFunctions.fileSettings()]
+            files = [AppFunctions.fileSettings(cmdMode)]
             
             while AppFunctions.otherFiles():
-                files.append(AppFunctions.fileSettings())
+                files.append(AppFunctions.fileSettings(cmdMode))
 
         case _:
-            files = AppFunctions.folderSetting()
+            files = AppFunctions.folderSetting(cmdMode)
             
     #file = AppFunctions.fileSettings()
     image_formats = AppFunctions.imageFormat()
