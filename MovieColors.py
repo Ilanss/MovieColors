@@ -7,6 +7,9 @@ def main():
     match mode:
         case '1':
             files = [AppFunctions.fileSettings()]
+            
+            while AppFunctions.otherFiles():
+                files.append(AppFunctions.fileSettings())
 
         case _:
             files = AppFunctions.folderSetting()

@@ -33,6 +33,13 @@ def fileSettings():
     #return {"video_name": video_name, "image_name": image_name, "video_path": video_path}
     return video_path
 
+def otherFiles():
+    import questionary
+
+    otherFiles = questionary.confirm("Do you want to add another file?").ask()
+
+    return otherFiles
+
 def folderSetting():
     import tkinter as tk
     from tkinter import filedialog
