@@ -1,36 +1,20 @@
-def fileSettings():
-    import tkinter as tk
-    from tkinter import filedialog
-    # import questionary
-    # import os
+def fileSettings(cmdMode):
+    if cmdMode == 1:
+        import questionary
 
-    root = tk.Tk()
-    root.withdraw() 
-    
-    video_path = filedialog.askopenfilename(
-        title="Select a Video File",
-        filetypes=[("Video Files", "*.mp4 *.avi *.mov *.mkv"), ("All Files", "*.*")]
-    )
+        video_path = questionary.path("Select a Video File").ask()
 
-    # if video_path == '':
-    #     video_path = 'movies/your_videov.mp4'
-    # file_stats = os.stat(video_path)
+    else:
+        import tkinter as tk
+        from tkinter import filedialog
 
-    # while file_stats.st_size > 1000000:
-    #     if questionary.confirm("Your file is bigger than 10mb, it may take a long time to process. Are you sure?").ask():
-    #         break
+        root = tk.Tk()
+        root.withdraw() 
 
-    #     else:
-    #         video_path = filedialog.askopenfilename(
-    #             title="Select a Video File",
-    #             filetypes=[("Video Files", "*.mp4 *.avi *.mov"), ("All Files", "*.*")]
-    #         )
-
-    #         file_stats = os.stat(video_path)
-
-    # image_name = questionary.text("Enter image name: ").ask()
-
-    #return {"video_name": video_name, "image_name": image_name, "video_path": video_path}
+        video_path = filedialog.askopenfilename(
+            title="Select a Video File",
+            filetypes=[("Video Files", "*.mp4 *.avi *.mov *.mkv"), ("All Files", "*.*")]
+        )
     return video_path
 
 def otherFiles():
@@ -40,19 +24,24 @@ def otherFiles():
 
     return otherFiles
 
-def folderSetting():
-    import tkinter as tk
-    from tkinter import filedialog
+def folderSetting(cmdMode):
     import glob
     import questionary
     import os
 
-    root = tk.Tk()
-    root.withdraw() 
-    
-    directory_path = filedialog.askdirectory(
-        title="Select a video directory"
-    )
+    if cmdMode == 1:
+        directory_path = questionary.path("Select a video directory", only_directories=True).ask()
+
+    else:
+        import tkinter as tk
+        from tkinter import filedialog
+
+        root = tk.Tk()
+        root.withdraw() 
+        
+        directory_path = filedialog.askdirectory(
+            title="Select a video directory"
+        )
 
     video_paths = []
     
@@ -97,7 +86,15 @@ def processMode():
         ]
     ).ask()
 
-    return mode
+    cmdMode = questionary.select(
+        "In which mode do you want to run?",
+        choices=[
+            Choice(title="Full command line", value="1"),
+            Choice(title="Graphical file selection", value="2"),
+        ]
+    ).ask()
+
+    return mode, cmdMode
 
 def engineChoice():
     import questionary

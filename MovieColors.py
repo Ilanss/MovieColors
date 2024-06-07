@@ -2,7 +2,7 @@ import FormatImage
 import AppFunctions
 
 def main():
-    mode = AppFunctions.processMode()
+    mode, cmdMode = AppFunctions.processMode()
 
     match mode:
         case '1':
